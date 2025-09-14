@@ -120,17 +120,17 @@ export default function Calculator() {
                 <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
                   <h4 className="text-lg font-bold text-primary mb-2">Plano Básico</h4>
                   <p className="text-sm text-gray-400 mb-4">(Entrega Própria)</p>
-                  <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.own.sellingPrice)}</p>
+                  <p className="text-3xl font-bold text-green-500 mb-4">{formatCurrency(results.own.sellingPrice)}</p>
                   <div className="text-xs text-gray-400 space-y-1 w-full text-left">
-                    <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.own.totalFees)}</span></p>
+                    <p className="font-bold">Total de Taxas: <span className="float-right text-primary">{formatCurrency(results.own.totalFees)}</span></p>
                   </div>
                 </div>
                 <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
                   <h4 className="text-lg font-bold text-primary mb-2">Plano Entrega</h4>
                   <p className="text-sm text-gray-400 mb-4">(Entrega Parceira)</p>
-                  <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.partner.sellingPrice)}</p>
+                  <p className="text-3xl font-bold text-green-500 mb-4">{formatCurrency(results.partner.sellingPrice)}</p>
                   <div className="text-xs text-gray-400 space-y-1 w-full text-left">
-                    <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.partner.totalFees)}</span></p>
+                    <p className="font-bold">Total de Taxas: <span className="float-right text-primary">{formatCurrency(results.partner.totalFees)}</span></p>
                   </div>
                 </div>
               </div>
