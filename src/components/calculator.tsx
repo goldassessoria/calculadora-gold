@@ -52,10 +52,10 @@ export default function Calculator() {
   };
 
   return (
-    <Card className="w-full max-w-lg shadow-2xl bg-[#1E1E1E] border border-yellow-500/30 shadow-yellow-500/20">
+    <Card className="w-full max-w-lg shadow-2xl bg-[#1E1E1E] border border-primary/30 shadow-primary/20">
       <CardHeader className="text-center">
         <div className="flex justify-center items-center gap-3">
-            <Utensils className="h-8 w-8 text-yellow-500" />
+            <Utensils className="h-8 w-8 text-primary" />
             <CardTitle className="text-3xl font-bold text-white">
             Calculadora Gold
             </CardTitle>
@@ -114,7 +114,7 @@ export default function Calculator() {
           {sellingPrice !== null && (
             <div className="mt-4 text-center text-white p-4 bg-black/50 rounded-lg">
                 <p className="text-lg">Preço de Venda Sugerido (Entrega Parceira):</p>
-                <p className="text-3xl font-bold text-yellow-500">{formatCurrency(sellingPrice)}</p>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(sellingPrice)}</p>
             </div>
           )}
 

@@ -10,7 +10,7 @@ const goldButtonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-yellow-500 text-black hover:bg-yellow-500/90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
       },
       size: {
         default: 'h-10 px-4 py-2',
