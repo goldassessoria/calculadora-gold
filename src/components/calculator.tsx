@@ -26,9 +26,17 @@ const partnerDeliveryRates = {
   anticipation: 0.0159,
 };
 
+interface CalculationResult {
+  sellingPrice: number;
+  commissionValue: number;
+  paymentFee: number;
+  anticipationFee: number;
+  totalFees: number;
+}
+
 export default function Calculator() {
   const [netValue, setNetValue] = useState<number | ''>('');
-  const [sellingPrice, setSellingPrice] = useState<number | null>(null);
+  const [results, setResults] = useState<{ own: CalculationResult, partner: CalculationResult } | null>(null);
 
   const ownDeliveryTotalTax = useMemo(() => {
     return (ownDeliveryRates.commission + ownDeliveryRates.payment + ownDeliveryRates.anticipation) * 100;
@@ -41,13 +49,29 @@ export default function Calculator() {
   const calculatePrice = () => {
     const value = netValue === '' ? 0 : Number(netValue);
     if (value > 0) {
-      // For simplicity, let's just calculate based on a single rate for now or decide which one to show.
-      // Based on the image, there isn't a final price output, just the taxes.
-      // Let's make the button calculate a hypothetical price for demonstration.
-      const price = value / (1 - (partnerDeliveryRates.commission + partnerDeliveryRates.payment + partnerDeliveryRates.anticipation));
-      setSellingPrice(price);
+      const ownTotalRate = ownDeliveryRates.commission + ownDeliveryRates.payment + ownDeliveryRates.anticipation;
+      const ownSellingPrice = value / (1 - ownTotalRate);
+      const ownResults: CalculationResult = {
+        sellingPrice: ownSellingPrice,
+        commissionValue: ownSellingPrice * ownDeliveryRates.commission,
+        paymentFee: ownSellingPrice * ownDeliveryRates.payment,
+        anticipationFee: ownSellingPrice * ownDeliveryRates.anticipation,
+        totalFees: ownSellingPrice * ownTotalRate,
+      };
+
+      const partnerTotalRate = partnerDeliveryRates.commission + partnerDeliveryRates.payment + partnerDeliveryRates.anticipation;
+      const partnerSellingPrice = value / (1 - partnerTotalRate);
+      const partnerResults: CalculationResult = {
+        sellingPrice: partnerSellingPrice,
+        commissionValue: partnerSellingPrice * partnerDeliveryRates.commission,
+        paymentFee: partnerSellingPrice * partnerDeliveryRates.payment,
+        anticipationFee: partnerSellingPrice * partnerDeliveryRates.anticipation,
+        totalFees: partnerSellingPrice * partnerTotalRate,
+      };
+      
+      setResults({ own: ownResults, partner: partnerResults });
     } else {
-      setSellingPrice(null);
+      setResults(null);
     }
   };
 
@@ -111,10 +135,39 @@ export default function Calculator() {
             Calcular Preço de Venda
           </GoldButton>
 
-          {sellingPrice !== null && (
-            <div className="mt-4 text-center text-white p-4 bg-black/50 rounded-lg">
-                <p className="text-lg">Preço de Venda Sugerido (Entrega Parceira):</p>
-                <p className="text-3xl font-bold text-primary">{formatCurrency(sellingPrice)}</p>
+          {results && (
+            <div className="mt-6 space-y-6">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-white">Preços Sugeridos para Venda</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Plano Básico */}
+                <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
+                  <h4 className="text-lg font-bold text-primary mb-2">Plano Básico</h4>
+                  <p className="text-sm text-gray-400 mb-4">(Entrega Própria)</p>
+                  <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.own.sellingPrice)}</p>
+                  <div className="text-xs text-gray-400 space-y-1 w-full text-left">
+                    <p>Comissão iFood (12%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.commissionValue)}</span></p>
+                    <p>Taxa de Pagamento (3,5%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.paymentFee)}</span></p>
+                    <p>Taxa de Antecipação (1,59%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.anticipationFee)}</span></p>
+                    <hr className="border-t border-gray-700 my-1" />
+                    <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.own.totalFees)}</span></p>
+                  </div>
+                </div>
+                {/* Plano Entrega */}
+                <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
+                  <h4 className="text-lg font-bold text-primary mb-2">Plano Entrega</h4>
+                  <p className="text-sm text-gray-400 mb-4">(Entrega Parceira)</p>
+                  <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.partner.sellingPrice)}</p>
+                  <div className="text-xs text-gray-400 space-y-1 w-full text-left">
+                    <p>Comissão iFood (23%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.commissionValue)}</span></p>
+                    <p>Taxa de Pagamento (3,5%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.paymentFee)}</span></p>
+                    <p>Taxa de Antecipação (1,59%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.anticipationFee)}</span></p>
+                     <hr className="border-t border-gray-700 my-1" />
+                    <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.partner.totalFees)}</span></p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
