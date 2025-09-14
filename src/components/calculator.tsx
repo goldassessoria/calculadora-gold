@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Cog } from 'lucide-react';
+import { Utensils } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import TaxConsistencyChecker from '@/components/tax-consistency-checker';
 
@@ -92,8 +92,11 @@ export default function Calculator() {
   return (
     <Card className="w-full max-w-4xl shadow-2xl font-headline">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold text-primary">Calculadora Gold</CardTitle>
-        <CardDescription>Calcule o preço de venda ideal para seus produtos no iFood.</CardDescription>
+        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-primary">
+          <Utensils className="h-8 w-8" />
+          Calculadora Gold
+        </CardTitle>
+        <CardDescription>Pare de vender no prejuízo. Descubra o preço de venda ideal para seus produtos no iFood.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
