@@ -5,9 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Utensils } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import TaxConsistencyChecker from '@/components/tax-consistency-checker';
 
 const TAX_RATES_KEY = 'calculadoraGoldTaxRates';
@@ -114,30 +112,28 @@ export default function Calculator() {
               />
             </div>
 
-            <Accordion type="single" collapsible defaultValue="item-1">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-lg">Configurações de Taxas</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  {Object.entries(taxRateLabels).map(([key, label]) => (
-                    <div key={key}>
-                      <Label htmlFor={key}>{label}</Label>
-                      <Input
-                        id={key}
-                        type="number"
-                        value={isClient ? taxRates[key as keyof TaxRates] : ''}
-                        onChange={(e) => handleTaxRateChange(key as keyof TaxRates, e.target.value)}
-                        className="mt-1"
-                        placeholder="0.00"
-                        step="0.01"
-                      />
-                    </div>
-                  ))}
-                  <div className="flex justify-end pt-2">
-                     <TaxConsistencyChecker taxRateLabels={Object.values(taxRateLabels)} />
+            <div>
+              <h3 className="text-lg font-medium">Configurações de Taxas</h3>
+              <div className="space-y-4 pt-4">
+                {Object.entries(taxRateLabels).map(([key, label]) => (
+                  <div key={key}>
+                    <Label htmlFor={key}>{label}</Label>
+                    <Input
+                      id={key}
+                      type="number"
+                      value={isClient ? taxRates[key as keyof TaxRates] : ''}
+                      onChange={(e) => handleTaxRateChange(key as keyof TaxRates, e.target.value)}
+                      className="mt-1"
+                      placeholder="0.00"
+                      step="0.01"
+                    />
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+                ))}
+                <div className="flex justify-end pt-2">
+                    <TaxConsistencyChecker taxRateLabels={Object.values(taxRateLabels)} />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Column: Results */}
