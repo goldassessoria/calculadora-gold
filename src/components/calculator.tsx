@@ -29,7 +29,7 @@ const formatCurrency = (value: number) => {
 };
 
 export default function Calculator() {
-  const [netValue, setNetValue] = useState<number>(100);
+  const [netValue, setNetValue] = useState<number | ''>('');
   const [taxRates, setTaxRates] = useState<TaxRates>({
     commission: 12,
     payment: 3.5,
@@ -69,6 +69,9 @@ export default function Calculator() {
   };
 
   const { sellingPrice, totalFees, finalValue } = useMemo(() => {
+    if (netValue === '' || netValue <= 0) {
+      return { sellingPrice: 0, totalFees: 0, finalValue: 0 };
+    }
     const commissionRate = taxRates.commission / 100;
     const paymentRate = taxRates.payment / 100;
     const anticipationRate = taxRates.anticipation / 100;
@@ -79,7 +82,7 @@ export default function Calculator() {
       return { sellingPrice: Infinity, totalFees: Infinity, finalValue: 0 };
     }
 
-    const price = netValue / (1 - totalRate);
+    const price = Number(netValue) / (1 - totalRate);
     const fees = price * totalRate;
     const final = price - fees;
 
@@ -100,14 +103,14 @@ export default function Calculator() {
           {/* Left Column: Inputs & Settings */}
           <div className="flex flex-col gap-6">
             <div>
-              <Label htmlFor="netValue" className="text-lg">Valor líquido desejado</Label>
+              <Label htmlFor="netValue" className="text-lg">Valor que você quer receber (líquido)</Label>
               <Input
                 id="netValue"
                 type="number"
                 value={netValue}
-                onChange={(e) => setNetValue(parseFloat(e.target.value) || 0)}
+                onChange={(e) => setNetValue(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
                 className="mt-2 text-2xl h-14 p-4"
-                placeholder="R$ 100,00"
+                placeholder="Ex: R$ 50,00"
               />
             </div>
 
