@@ -9,17 +9,16 @@ import { Utensils } from 'lucide-react';
 
 const TAX_RATES_KEY = 'calculadoraGoldTaxRates';
 
-interface TaxRates {
+interface PlanRates {
   commission: number;
   payment: number;
   anticipation: number;
 }
 
-const taxRateLabels = {
-  commission: 'Comissão iFood (%)',
-  payment: 'Taxa de Pagamento (%)',
-  anticipation: 'Taxa de Antecipação (%)',
-};
+interface TaxRates {
+  basic: PlanRates;
+  partner: PlanRates;
+}
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
@@ -28,12 +27,33 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+const calculatePlan = (netValue: number, rates: PlanRates) => {
+    if (netValue <= 0) {
+      return { sellingPrice: 0, totalFees: 0, finalValue: 0 };
+    }
+    const commissionRate = rates.commission / 100;
+    const paymentRate = rates.payment / 100;
+    const anticipationRate = rates.anticipation / 100;
+    
+    const totalRate = commissionRate + paymentRate + anticipationRate;
+
+    if (totalRate >= 1) {
+      return { sellingPrice: Infinity, totalFees: Infinity, finalValue: 0 };
+    }
+
+    const price = netValue / (1 - totalRate);
+    const fees = price * totalRate;
+    const final = price - fees;
+
+    return { sellingPrice: price, totalFees: fees, finalValue: final };
+};
+
+
 export default function Calculator() {
   const [netValue, setNetValue] = useState<number | ''>('');
   const [taxRates, setTaxRates] = useState<TaxRates>({
-    commission: 12,
-    payment: 3.5,
-    anticipation: 1.99,
+    basic: { commission: 12, payment: 3.5, anticipation: 1.99 },
+    partner: { commission: 23, payment: 3.5, anticipation: 1.99 },
   });
   const [isClient, setIsClient] = useState(false);
 
@@ -43,8 +63,7 @@ export default function Calculator() {
       const savedRates = localStorage.getItem(TAX_RATES_KEY);
       if (savedRates) {
         const parsedRates = JSON.parse(savedRates);
-        // Basic validation to ensure keys exist
-        if (parsedRates.commission && parsedRates.payment && parsedRates.anticipation) {
+        if (parsedRates.basic && parsedRates.partner) {
             setTaxRates(parsedRates);
         }
       }
@@ -63,31 +82,26 @@ export default function Calculator() {
     }
   }, [taxRates, isClient]);
 
-  const handleTaxRateChange = (key: keyof TaxRates, value: string) => {
+  const handleTaxRateChange = (plan: 'basic' | 'partner', key: keyof PlanRates, value: string) => {
     const numericValue = parseFloat(value) || 0;
-    setTaxRates((prev) => ({ ...prev, [key]: numericValue }));
+    setTaxRates((prev) => ({ 
+      ...prev, 
+      [plan]: {
+        ...prev[plan],
+        [key]: numericValue,
+      }
+    }));
   };
 
-  const { sellingPrice, totalFees, finalValue } = useMemo(() => {
-    if (netValue === '' || netValue <= 0) {
-      return { sellingPrice: 0, totalFees: 0, finalValue: 0 };
-    }
-    const commissionRate = taxRates.commission / 100;
-    const paymentRate = taxRates.payment / 100;
-    const anticipationRate = taxRates.anticipation / 100;
-    
-    const totalRate = commissionRate + paymentRate + anticipationRate;
+  const basicPlanResult = useMemo(() => {
+    const value = netValue === '' ? 0 : Number(netValue);
+    return calculatePlan(value, taxRates.basic);
+  }, [netValue, taxRates.basic]);
 
-    if (totalRate >= 1) {
-      return { sellingPrice: Infinity, totalFees: Infinity, finalValue: 0 };
-    }
-
-    const price = Number(netValue) / (1 - totalRate);
-    const fees = price * totalRate;
-    const final = price - fees;
-
-    return { sellingPrice: price, totalFees: fees, finalValue: final };
-  }, [netValue, taxRates]);
+  const partnerPlanResult = useMemo(() => {
+    const value = netValue === '' ? 0 : Number(netValue);
+    return calculatePlan(value, taxRates.partner);
+  }, [netValue, taxRates.partner]);
 
   return (
     <Card className="w-full max-w-4xl shadow-2xl font-headline">
@@ -114,70 +128,145 @@ export default function Calculator() {
               />
             </div>
 
-            <div>
-              <h3 className="text-lg font-medium">Configurações de Taxas</h3>
-              <div className="space-y-4 pt-4">
-                {Object.entries(taxRateLabels).map(([key, label]) => (
-                  <div key={key}>
-                    <Label htmlFor={key}>{label}</Label>
-                    <Input
-                      id={key}
-                      type="number"
-                      value={isClient ? taxRates[key as keyof TaxRates] : ''}
-                      onChange={(e) => handleTaxRateChange(key as keyof TaxRates, e.target.value)}
-                      className="mt-1"
-                      placeholder="0.00"
-                      step="0.01"
-                    />
-                  </div>
-                ))}
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+               <div>
+                <h3 className="text-lg font-medium">Plano Básico</h3>
+                 <div className="space-y-4 pt-4">
+                    <div>
+                      <Label htmlFor="basic-commission">Comissão iFood (%)</Label>
+                      <Input
+                        id="basic-commission"
+                        type="number"
+                        value={isClient ? taxRates.basic.commission : ''}
+                        onChange={(e) => handleTaxRateChange('basic', 'commission', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                     <div>
+                      <Label htmlFor="basic-payment">Taxa de Pagamento (%)</Label>
+                      <Input
+                        id="basic-payment"
+                        type="number"
+                        value={isClient ? taxRates.basic.payment : ''}
+                        onChange={(e) => handleTaxRateChange('basic', 'payment', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                     <div>
+                      <Label htmlFor="basic-anticipation">Taxa de Antecipação (%)</Label>
+                      <Input
+                        id="basic-anticipation"
+                        type="number"
+                        value={isClient ? taxRates.basic.anticipation : ''}
+                        onChange={(e) => handleTaxRateChange('basic', 'anticipation', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                 </div>
+               </div>
+               <div>
+                <h3 className="text-lg font-medium">Entrega Parceiro</h3>
+                 <div className="space-y-4 pt-4">
+                    <div>
+                      <Label htmlFor="partner-commission">Comissão iFood (%)</Label>
+                      <Input
+                        id="partner-commission"
+                        type="number"
+                        value={isClient ? taxRates.partner.commission : ''}
+                        onChange={(e) => handleTaxRateChange('partner', 'commission', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                     <div>
+                      <Label htmlFor="partner-payment">Taxa de Pagamento (%)</Label>
+                      <Input
+                        id="partner-payment"
+                        type="number"
+                        value={isClient ? taxRates.partner.payment : ''}
+                        onChange={(e) => handleTaxRateChange('partner', 'payment', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                     <div>
+                      <Label htmlFor="partner-anticipation">Taxa de Antecipação (%)</Label>
+                      <Input
+                        id="partner-anticipation"
+                        type="number"
+                        value={isClient ? taxRates.partner.anticipation : ''}
+                        onChange={(e) => handleTaxRateChange('partner', 'anticipation', e.target.value)}
+                        className="mt-1"
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    </div>
+                 </div>
+               </div>
             </div>
           </div>
 
           {/* Right Column: Results */}
           <div className="bg-card-foreground/5 rounded-lg p-6 flex flex-col justify-center">
-            <div className="text-center mb-6">
-              <p className="text-muted-foreground text-lg">Preço de venda sugerido</p>
-              <p className="text-5xl font-bold text-primary tracking-tight">
-                {isFinite(sellingPrice) ? formatCurrency(sellingPrice) : 'Inválido'}
-              </p>
+            <h3 className="text-center font-bold text-xl mb-4">Preço de venda sugerido</h3>
+            
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <h4 className="font-semibold text-lg">Plano Básico</h4>
+                <p className="text-3xl font-bold text-primary tracking-tight">
+                  {isFinite(basicPlanResult.sellingPrice) ? formatCurrency(basicPlanResult.sellingPrice) : 'Inválido'}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-lg">Entrega Parceiro</h4>
+                 <p className="text-3xl font-bold text-primary tracking-tight">
+                  {isFinite(partnerPlanResult.sellingPrice) ? formatCurrency(partnerPlanResult.sellingPrice) : 'Inválido'}
+                </p>
+              </div>
             </div>
             
             <Separator className="my-4" />
 
-            <h3 className="text-center font-bold text-xl mb-4">Comparativo de Planos</h3>
             <div className="grid grid-cols-2 gap-4 text-center">
+              {/* Basic Plan Breakdown */}
               <div>
-                <h4 className="font-semibold text-lg">Plano Básico</h4>
-              </div>
-              <div>
-                <h4 className="font-semibold text-lg">Entrega Parceiro</h4>
-              </div>
-
-              {/* Assuming rates are same for now, but structure allows different values */}
-              {[
-                { label: 'Preço de Venda', value: sellingPrice },
-                { label: 'Taxas Totais', value: totalFees, negative: true },
-                { label: 'Valor Final', value: finalValue, isFinal: true },
-              ].map((item, index) => (
-                <>
-                  <div key={`${item.label}-basic`} className={`py-2 ${item.isFinal ? 'font-bold text-primary' : ''} ${item.negative ? 'text-destructive' : ''}`}>
+                 {[
+                  { label: 'Taxas Totais', value: basicPlanResult.totalFees, negative: true },
+                  { label: 'Valor Final', value: basicPlanResult.finalValue, isFinal: true },
+                ].map((item) => (
+                  <div key={`${item.label}-basic`} className={`py-2 ${item.isFinal ? 'font-bold' : ''} ${item.negative ? 'text-destructive' : ''}`}>
                     <p className="text-sm text-muted-foreground">{item.label}</p>
                     <p className="text-lg">
                       {item.negative ? '- ' : ''}
                       {isFinite(item.value) ? formatCurrency(Math.abs(item.value)) : '-'}
                     </p>
                   </div>
-                   <div key={`${item.label}-partner`} className={`py-2 ${item.isFinal ? 'font-bold text-primary' : ''} ${item.negative ? 'text-destructive' : ''}`}>
+                ))}
+              </div>
+              
+              {/* Partner Plan Breakdown */}
+              <div>
+                {[
+                  { label: 'Taxas Totais', value: partnerPlanResult.totalFees, negative: true },
+                  { label: 'Valor Final', value: partnerPlanResult.finalValue, isFinal: true },
+                ].map((item) => (
+                  <div key={`${item.label}-partner`} className={`py-2 ${item.isFinal ? 'font-bold' : ''} ${item.negative ? 'text-destructive' : ''}`}>
                     <p className="text-sm text-muted-foreground">{item.label}</p>
                     <p className="text-lg">
                       {item.negative ? '- ' : ''}
                       {isFinite(item.value) ? formatCurrency(Math.abs(item.value)) : '-'}
                     </p>
                   </div>
-                </>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
