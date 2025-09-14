@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Utensils } from 'lucide-react';
-import TaxConsistencyChecker from '@/components/tax-consistency-checker';
 
 const TAX_RATES_KEY = 'calculadoraGoldTaxRates';
 
@@ -129,9 +128,6 @@ export default function Calculator() {
                     />
                   </div>
                 ))}
-                <div className="flex justify-end pt-2">
-                    <TaxConsistencyChecker taxRateLabels={Object.values(taxRateLabels)} />
-                </div>
               </div>
             </div>
           </div>
