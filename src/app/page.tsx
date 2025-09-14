@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-background p-4 font-body text-foreground antialiased">
       <Header />
-      <main className="flex w-full flex-1 flex-col items-center justify-center gap-8 py-8">
+      <main className="flex w-full flex-1 flex-col items-center justify-center gap-16 py-8">
         <Calculator />
         <Faq />
       </main>
