@@ -28,9 +28,6 @@ const partnerDeliveryRates = {
 
 interface CalculationResult {
   sellingPrice: number;
-  commissionValue: number;
-  paymentFee: number;
-  anticipationFee: number;
   totalFees: number;
 }
 
@@ -53,9 +50,6 @@ export default function Calculator() {
       const ownSellingPrice = value / (1 - ownTotalRate);
       const ownResults: CalculationResult = {
         sellingPrice: ownSellingPrice,
-        commissionValue: ownSellingPrice * ownDeliveryRates.commission,
-        paymentFee: ownSellingPrice * ownDeliveryRates.payment,
-        anticipationFee: ownSellingPrice * ownDeliveryRates.anticipation,
         totalFees: ownSellingPrice * ownTotalRate,
       };
 
@@ -63,9 +57,6 @@ export default function Calculator() {
       const partnerSellingPrice = value / (1 - partnerTotalRate);
       const partnerResults: CalculationResult = {
         sellingPrice: partnerSellingPrice,
-        commissionValue: partnerSellingPrice * partnerDeliveryRates.commission,
-        paymentFee: partnerSellingPrice * partnerDeliveryRates.payment,
-        anticipationFee: partnerSellingPrice * partnerDeliveryRates.anticipation,
         totalFees: partnerSellingPrice * partnerTotalRate,
       };
       
@@ -147,10 +138,6 @@ export default function Calculator() {
                   <p className="text-sm text-gray-400 mb-4">(Entrega Própria)</p>
                   <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.own.sellingPrice)}</p>
                   <div className="text-xs text-gray-400 space-y-1 w-full text-left">
-                    <p>Comissão iFood (12%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.commissionValue)}</span></p>
-                    <p>Taxa de Pagamento (3,5%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.paymentFee)}</span></p>
-                    <p>Taxa de Antecipação (1,59%): <span className="float-right font-semibold text-white">{formatCurrency(results.own.anticipationFee)}</span></p>
-                    <hr className="border-t border-gray-700 my-1" />
                     <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.own.totalFees)}</span></p>
                   </div>
                 </div>
@@ -160,10 +147,6 @@ export default function Calculator() {
                   <p className="text-sm text-gray-400 mb-4">(Entrega Parceira)</p>
                   <p className="text-3xl font-bold text-white mb-4">{formatCurrency(results.partner.sellingPrice)}</p>
                   <div className="text-xs text-gray-400 space-y-1 w-full text-left">
-                    <p>Comissão iFood (23%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.commissionValue)}</span></p>
-                    <p>Taxa de Pagamento (3,5%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.paymentFee)}</span></p>
-                    <p>Taxa de Antecipação (1,59%): <span className="float-right font-semibold text-white">{formatCurrency(results.partner.anticipationFee)}</span></p>
-                     <hr className="border-t border-gray-700 my-1" />
                     <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.partner.totalFees)}</span></p>
                   </div>
                 </div>
