@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,18 +14,6 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-const ownDeliveryRates = {
-  commission: 0.12,
-  payment: 0.035,
-  anticipation: 0.0159,
-};
-
-const partnerDeliveryRates = {
-  commission: 0.23,
-  payment: 0.035,
-  anticipation: 0.0159,
-};
-
 interface CalculationResult {
   sellingPrice: number;
   totalFees: number;
@@ -35,25 +23,20 @@ export default function Calculator() {
   const [netValue, setNetValue] = useState<number | ''>('');
   const [results, setResults] = useState<{ own: CalculationResult, partner: CalculationResult } | null>(null);
 
-  const ownDeliveryTotalTax = useMemo(() => {
-    return (ownDeliveryRates.commission + ownDeliveryRates.payment + ownDeliveryRates.anticipation) * 100;
-  }, []);
-
-  const partnerDeliveryTotalTax = useMemo(() => {
-    return (partnerDeliveryRates.commission + partnerDeliveryRates.payment + partnerDeliveryRates.anticipation) * 100;
-  }, []);
+  const [ownDeliveryTotalTax, setOwnDeliveryTotalTax] = useState(17.09);
+  const [partnerDeliveryTotalTax, setPartnerDeliveryTotalTax] = useState(28.09);
 
   const calculatePrice = () => {
     const value = netValue === '' ? 0 : Number(netValue);
     if (value > 0) {
-      const ownTotalRate = ownDeliveryRates.commission + ownDeliveryRates.payment + ownDeliveryRates.anticipation;
+      const ownTotalRate = ownDeliveryTotalTax / 100;
       const ownSellingPrice = value / (1 - ownTotalRate);
       const ownResults: CalculationResult = {
         sellingPrice: ownSellingPrice,
         totalFees: ownSellingPrice * ownTotalRate,
       };
 
-      const partnerTotalRate = partnerDeliveryRates.commission + partnerDeliveryRates.payment + partnerDeliveryRates.anticipation;
+      const partnerTotalRate = partnerDeliveryTotalTax / 100;
       const partnerSellingPrice = value / (1 - partnerTotalRate);
       const partnerResults: CalculationResult = {
         sellingPrice: partnerSellingPrice,
@@ -100,8 +83,9 @@ export default function Calculator() {
               <Label htmlFor="own-delivery" className="font-medium text-white">Entrega Própria (%)</Label>
               <Input
                 id="own-delivery"
-                readOnly
-                value={ownDeliveryTotalTax.toFixed(2)}
+                type="number"
+                value={ownDeliveryTotalTax}
+                onChange={(e) => setOwnDeliveryTotalTax(parseFloat(e.target.value) || 0)}
                 className="bg-black border-gray-700 text-white h-12 text-center font-bold text-base"
               />
               <p className="text-xs text-gray-400 text-center">
@@ -112,8 +96,9 @@ export default function Calculator() {
               <Label htmlFor="partner-delivery" className="font-medium text-white">Entrega Parceira (%)</Label>
               <Input
                 id="partner-delivery"
-                readOnly
-                value={partnerDeliveryTotalTax.toFixed(2)}
+                type="number"
+                value={partnerDeliveryTotalTax}
+                onChange={(e) => setPartnerDeliveryTotalTax(parseFloat(e.target.value) || 0)}
                 className="bg-black border-gray-700 text-white h-12 text-center font-bold text-base"
               />
               <p className="text-xs text-gray-400 text-center">
@@ -132,7 +117,6 @@ export default function Calculator() {
                 <h3 className="text-2xl font-bold text-white">Preços Sugeridos para Venda</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Plano Básico */}
                 <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
                   <h4 className="text-lg font-bold text-primary mb-2">Plano Básico</h4>
                   <p className="text-sm text-gray-400 mb-4">(Entrega Própria)</p>
@@ -141,7 +125,6 @@ export default function Calculator() {
                     <p className="font-bold">Total de Taxas: <span className="float-right text-white">{formatCurrency(results.own.totalFees)}</span></p>
                   </div>
                 </div>
-                {/* Plano Entrega */}
                 <div className="bg-black/50 rounded-lg p-4 flex flex-col items-center">
                   <h4 className="text-lg font-bold text-primary mb-2">Plano Entrega</h4>
                   <p className="text-sm text-gray-400 mb-4">(Entrega Parceira)</p>
