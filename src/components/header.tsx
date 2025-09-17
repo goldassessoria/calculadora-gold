@@ -6,9 +6,9 @@ export default function Header() {
       <a href="https://goldpizzarias.com.br" target="_blank" rel="noopener noreferrer">
         <Image
           src="https://i.imgur.com/UBxesF1.png"
-          alt="Calculadora Gold Logo"
-          width={200}
-          height={50}
+          alt="Logo Gold Pizzarias"
+          width={300}
+          height={75}
           priority
         />
       </a>
