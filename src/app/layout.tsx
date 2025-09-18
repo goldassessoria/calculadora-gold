@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
 import { Montserrat } from 'next/font/google';
+import GoogleAnalytics from '@/components/google-analytics';
 
 export const metadata: Metadata = {
   title: 'Calculadora Gold',
@@ -46,6 +47,7 @@ export default function RootLayout({
         {/* End Meta Pixel Code */}
       </head>
       <body className="font-body antialiased">
+        <GoogleAnalytics measurementId="G-9ELHK2G8N6" />
         {children}
         <Toaster />
       </body>
