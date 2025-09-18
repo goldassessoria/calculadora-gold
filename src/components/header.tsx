@@ -9,7 +9,6 @@ export default function Header() {
           alt="Logo Gold Pizzarias"
           width={300}
           height={75}
-          priority
         />
       </a>
     </header>
