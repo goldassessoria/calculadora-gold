@@ -1,8 +1,6 @@
 import Calculator from '@/components/calculator';
+import Faq from '@/components/faq';
 import Header from '@/components/header';
-import dynamic from 'next/dynamic';
-
-const Faq = dynamic(() => import('@/components/faq'), { ssr: false });
 
 export default function Home() {
   return (
