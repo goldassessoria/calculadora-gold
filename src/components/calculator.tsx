@@ -26,24 +26,19 @@ interface CalculationResult {
 }
 
 export default function Calculator() {
-  const [netValue, setNetValue] = useState<number | ''>('');
+  const [netValue, setNetValue] = useState<string>('');
   const [results, setResults] = useState<{ own: CalculationResult, partner: CalculationResult } | null>(null);
 
   const [ownDeliveryTotalTax, setOwnDeliveryTotalTax] = useState(17.09);
   const [partnerDeliveryTotalTax, setPartnerDeliveryTotalTax] = useState(28.09);
 
   const handleNetValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '') {
-      setNetValue('');
-    } else {
-      const parsedValue = parseFloat(value);
-      setNetValue(isNaN(parsedValue) ? '' : parsedValue);
-    }
+    setNetValue(e.target.value);
   };
   
   const calculatePrice = () => {
-    const value = typeof netValue === 'number' ? netValue : 0;
+    const value = parseFloat(netValue.replace(',', '.')) || 0;
+
     if (value > 0) {
       const ownTotalRate = ownDeliveryTotalTax / 100;
       const ownSellingPrice = value / (1 - ownTotalRate);
@@ -86,11 +81,12 @@ export default function Calculator() {
             </Label>
             <Input
               id="netValue"
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={netValue}
               onChange={handleNetValueChange}
               className="bg-black border-gray-700 text-white placeholder:text-gray-500 h-12 text-base"
-              placeholder="Ex: R$ 50,00"
+              placeholder="Ex: 50,00"
             />
           </div>
 
