@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Utensils } from 'lucide-react';
 import { GoldButton } from '@/components/ui/gold-button';
+import Link from 'next/link';
 
 const formatCurrency = (value: number) => {
   if (isNaN(value) || !isFinite(value)) {
@@ -149,6 +150,35 @@ export default function Calculator() {
               <p className="text-xs text-gray-400 text-center mt-4">
                 *Obs. Os valores das taxas podem variar de acordo com seu perfil e conta no iFood.
               </p>
+
+              <div className="mt-8 pt-6 border-t border-primary/50 text-center">
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  💡 Agora que você sabe o preço certo… descubra como vender muito mais!
+                </h3>
+                <div className="space-y-4 text-gray-300">
+                  <p>
+                    Você já sabe o preço certo para não sair no prejuízo.
+                    Agora é hora de descobrir por que sua pizzaria ainda não está bombando de vender.
+                  </p>
+                  <p>
+                    A Gold está oferecendo um Diagnóstico Gratuito e personalizado, onde mostramos os erros que estão travando suas vendas e o plano prático para virar o jogo e depender menos do iFood.
+                  </p>
+                  <p>
+                    Clique abaixo e garanta o seu diagnóstico antes que as vagas acabem.
+                  </p>
+                </div>
+                <div className="mt-6">
+                  <Link href="https://goldpizzarias.com.br/diagnostico-gratuito" target="_blank" rel="noopener noreferrer">
+                    <GoldButton className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
+                      🚀 Quero meu Diagnóstico Gratuito
+                    </GoldButton>
+                  </Link>
+                </div>
+                <p className="text-xs text-gray-400 mt-4">
+                  Vagas limitadas. Diagnóstico 100% gratuito e exclusivo para pizzarias.
+                </p>
+              </div>
+
             </div>
           )}
 
