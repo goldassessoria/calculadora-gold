@@ -163,7 +163,7 @@ export default function Calculator() {
                   <p>
                     A Gold está oferecendo um Diagnóstico Gratuito e personalizado, onde mostramos os erros que estão travando suas vendas e o plano prático para virar o jogo e depender menos do iFood.
                   </p>
-                  <p>
+                  <p className="font-bold text-primary">
                     Clique abaixo e garanta o seu diagnóstico antes que as vagas acabem.
                   </p>
                 </div>
