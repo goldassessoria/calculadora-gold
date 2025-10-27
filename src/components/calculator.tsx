@@ -168,7 +168,7 @@ export default function Calculator() {
                   </p>
                 </div>
                 <div className="mt-6">
-                  <Link href="https://goldpizzarias.com.br/diagnostico-gratuito" target="_blank" rel="noopener noreferrer">
+                  <Link href="https://goldpizzarias.com.br" target="_blank" rel="noopener noreferrer">
                     <GoldButton className="w-full h-12 text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow">
                       🚀 Quero meu Diagnóstico Gratuito
                     </GoldButton>
