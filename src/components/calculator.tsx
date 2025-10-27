@@ -157,8 +157,7 @@ export default function Calculator() {
                 </h3>
                 <div className="space-y-4 text-gray-300">
                   <p>
-                    Você já sabe o preço certo para não sair no prejuízo.
-                    Agora é hora de descobrir por que sua pizzaria ainda não está bombando de vender.
+                    Você já deu o primeiro passo com o preço certo. Agora é hora de transformar sua pizzaria em uma máquina de vendas.
                   </p>
                   <p>
                     A Gold está oferecendo um Diagnóstico Gratuito e personalizado, onde mostramos os erros que estão travando suas vendas e o plano prático para virar o jogo e depender menos do iFood.
